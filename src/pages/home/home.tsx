@@ -45,7 +45,9 @@ const Home = () => {
           if (minutes !== 0) {
             setSeconds(59);
             setMinutes(minutes - 1);
-          } else {
+          }
+          if (minutes === 5) {
+            playSoundEnd();
           }
         } else {
           setSeconds(seconds - 1);
@@ -53,6 +55,12 @@ const Home = () => {
       }, 1000);
     }
   }, [seconds]);
+
+  const playSoundEnd = () => {
+    const sound = new Audio("/bell.wav");
+    sound.volume = 0.2;
+    sound.play();
+  };
 
   const toogle = () => {
     if (labelButton === "Start") {
