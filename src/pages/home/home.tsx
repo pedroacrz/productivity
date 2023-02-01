@@ -14,6 +14,7 @@ const Home = () => {
   const [minutes, setMinutes] = useState(25);
   const [seconds, setSeconds] = useState(0);
   const [labelButton, setLabelButton] = useState("Start");
+  const [canContinue, setCanContinue] = useState(false);
 
   const listTimes: Array<Record<string, number>> = [
     { minutes: 10, seconds: 0 },
@@ -29,6 +30,7 @@ const Home = () => {
     setMinutes(time.minutes);
     setSeconds(time.seconds);
     clearInterval(interval);
+    setCanContinue(false);
   };
 
   let interval: any;
@@ -47,7 +49,7 @@ const Home = () => {
             setMinutes(minutes - 1);
           }
           if (minutes === 5) {
-            playSoundEnd();
+            playSound("end");
           }
         } else {
           setSeconds(seconds - 1);
@@ -56,8 +58,12 @@ const Home = () => {
     }
   }, [seconds]);
 
-  const playSoundEnd = () => {
-    const sound = new Audio("/bell.wav");
+  const playSound = (type: "end" | "start") => {
+    const types = {
+      end: "/bell.wav",
+      start: "/bell_start.wav",
+    };
+    const sound = new Audio(types[type]);
     sound.volume = 0.2;
     sound.play();
   };
@@ -65,6 +71,9 @@ const Home = () => {
   const toogle = () => {
     if (labelButton === "Start") {
       setLabelButton("Stop");
+
+      playSound("start");
+      setCanContinue(false);
       clearInterval(interval);
       if (seconds === 0) {
         if (minutes !== 0) {
@@ -78,6 +87,8 @@ const Home = () => {
       return;
     }
     setLabelButton("Start");
+
+    setCanContinue(true);
     clearInterval(interval);
   };
 
@@ -93,7 +104,7 @@ const Home = () => {
             toogle();
           }}
         >
-          {labelButton}
+          {canContinue ? "Continue" : labelButton}
         </Button>
         <SelectTime>selecione o tempo desejado</SelectTime>
 
